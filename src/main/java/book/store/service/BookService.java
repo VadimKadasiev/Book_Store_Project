@@ -1,10 +1,13 @@
 package book.store.service;
 
-import book.store.model.Book;
-import org.hibernate.mapping.List;
+import book.store.dto.BookDto;
+import book.store.dto.CreateBookRequestDto;
+import java.util.List;
 
 public interface BookService {
-    Book save(Book book);
+    BookDto save(CreateBookRequestDto requestDto);
 
-    List findAll();
+    List<BookDto> findAll();
+
+    BookDto getBookById(Long id);
 }
