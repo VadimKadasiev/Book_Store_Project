@@ -1,10 +1,13 @@
 package book.store.repository;
 
 import book.store.model.Book;
-import org.hibernate.mapping.List;
+import java.util.List;
+import java.util.Optional;
 
 public interface BookRepository {
     Book save(Book book);
 
-    List findAll();
+    List<Book> findAll();
+
+    Optional<Book> getBookById(Long id);
 }
