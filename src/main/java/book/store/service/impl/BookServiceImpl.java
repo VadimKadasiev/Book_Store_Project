@@ -38,4 +38,16 @@ public class BookServiceImpl implements BookService {
                         "Can't find book by ID " + id));
         return bookMapper.toDto(book);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        bookRepository.deleteById(id);
+    }
+
+    @Override
+    public BookDto updateBook(Long id, CreateBookRequestDto bookRequestDto) {
+        Book book = bookMapper.toModel(bookRequestDto);
+        deleteById(id);
+        return bookMapper.toDto(bookRepository.save(book));
+    }
 }
