@@ -3,7 +3,6 @@ package book.store.controller;
 import book.store.dto.BookDto;
 import book.store.dto.CreateBookRequestDto;
 import book.store.service.BookService;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
