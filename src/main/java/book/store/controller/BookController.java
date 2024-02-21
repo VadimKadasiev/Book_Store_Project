@@ -24,7 +24,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
+    public BookDto createBook(@RequestBody CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
     }
 
@@ -46,7 +46,7 @@ public class BookController {
 
     @PutMapping("/{id}")
     public BookDto updateBook(@PathVariable Long id,
-                              @RequestBody @Valid CreateBookRequestDto bookRequestDto) {
+                              @RequestBody CreateBookRequestDto bookRequestDto) {
         return bookService.updateBook(id, bookRequestDto);
     }
 }
