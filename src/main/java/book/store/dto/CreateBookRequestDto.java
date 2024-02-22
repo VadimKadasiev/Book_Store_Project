@@ -14,7 +14,7 @@ public class CreateBookRequestDto {
     @NotNull(message = "ISBN field can't be empty")
     private String isbn;
     @NotNull(message = "Price field can't be empty")
-    @Min(value = 0,message = "Price must have a positive value")
+    @Min(value = 0, message = "Price must have a positive value")
     private BigDecimal price;
     @NotNull(message = "Description field can't be empty")
     private String description;
