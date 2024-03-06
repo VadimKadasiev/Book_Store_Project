@@ -29,8 +29,8 @@ public class BookController {
 
     @PostMapping
     @Operation(summary = "Create a new book", description = "Creating new book in DB")
-    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
-        return bookService.save(bookDto);
+    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookRequestDto) {
+        return bookService.save(bookRequestDto);
     }
 
     @GetMapping
