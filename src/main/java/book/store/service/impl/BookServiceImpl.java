@@ -9,7 +9,6 @@ import book.store.repository.BookRepository;
 import book.store.service.BookService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -19,14 +18,14 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
     @Override
-    public BookDto save(CreateBookRequestDto bookRequestDto) {
-        Book book = bookMapper.toModel(bookRequestDto);
+    public BookDto save(CreateBookRequestDto requestDto) {
+        Book book = bookMapper.toModel(requestDto);
         return bookMapper.toDto(bookRepository.save(book));
     }
 
     @Override
-    public List<BookDto> findAll(Pageable pageable) {
-        return bookRepository.findAll(pageable)
+    public List<BookDto> findAll() {
+        return bookRepository.findAll()
             .stream()
             .map(bookMapper::toDto)
             .toList();
@@ -37,6 +36,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.getBookById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can't find book by ID " + id));
+        System.out.println("text");
         return bookMapper.toDto(book);
     }
 
