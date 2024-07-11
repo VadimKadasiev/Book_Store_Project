@@ -8,11 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
-@Data
+@Setter
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
     @Id

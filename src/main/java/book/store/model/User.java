@@ -12,16 +12,18 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.Set;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Data
+@Setter
+@Getter
 @SQLDelete(sql = "UPDATE books SET is_deleted = TRUE WHERE id=?")
-@Where(clause = "is_deleted = FALSE")
+@SQLRestriction(value = "is_deleted = FALSE")
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
