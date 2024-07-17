@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-admin
+      author: Vadim Kadasiev
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: admin@gmail.com
+              - column:
+                  name: password
+                  value: $2a$10$V8BIKp5dL4oXLAcwIOYvnu8FWAZUPfhPxRwca0U1W.OG21fK7.2DS #admin
+              - column:
+                  name: first_name
+                  value: adminFirstName
+              - column:
+                  name: last_name
+                  value: adminLastName
+              - column:
+                  name: shipping_address
+                  value: adminAddress
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                   name: user_id
+                   value: 1
+              - column:
+                   name: role_id
+                   value: 1

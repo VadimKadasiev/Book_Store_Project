@@ -4,10 +4,14 @@ import book.store.dto.UserRegistrationRequestDto;
 import book.store.dto.UserResponseDto;
 import book.store.exception.RegistrationException;
 import book.store.mapper.UserMapper;
+import book.store.model.Role;
 import book.store.model.User;
+import book.store.repository.RoleRepository;
 import book.store.repository.UserRepository;
 import book.store.service.UserService;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -23,6 +29,9 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("User with this email already exists");
         }
         User user = userMapper.toUser(requestDto);
+        user.setPassword(encoder.encode(requestDto.getPassword()));
+        Role userRole = roleRepository.findByName(Role.RoleName.ROLE_USER);
+        user.setRoles(Set.of(userRole));
         User savedUser = userRepository.save(user);
         return userMapper.toUserResponse(savedUser);
     }
