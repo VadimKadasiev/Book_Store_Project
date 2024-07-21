@@ -3,6 +3,7 @@ package book.store.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -20,4 +21,6 @@ public class CreateBookRequestDto {
     private String description;
     @NotNull(message = "Cover_Image field can't be empty")
     private String coverImage;
+    @NotNull(message = "CategoryIds field can't be empty")
+    private Set<Long> categoryIds;
 }
