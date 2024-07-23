@@ -24,18 +24,23 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> findAll(Pageable pageable) {
-        return categoryRepository.findAll(pageable).stream().map(categoryMapper::toDto).toList();
+        return categoryRepository.findAll(pageable)
+                .stream()
+                .map(categoryMapper::toDto)
+                .toList();
     }
 
     @Override
     public CategoryDto getById(Long id) {
-        return categoryMapper.toDto(categoryRepository.findById(id).get());
+        return categoryMapper.toDto(categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Can't find category with ID " + id)));
     }
 
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
-        Category category = categoryMapper.toModel(categoryDto);
-        category.setId(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Can't find category with ID " + id));
+        categoryMapper.updateCategoryFromDto(categoryDto,category);
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
