@@ -1,6 +1,7 @@
 package book.store.service.impl;
 
 import book.store.dto.CategoryDto;
+import book.store.exception.EntityNotFoundException;
 import book.store.mapper.CategoryMapper;
 import book.store.model.Category;
 import book.store.repository.CategoryRepository;
@@ -33,13 +34,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getById(Long id) {
         return categoryMapper.toDto(categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can't find category with ID " + id)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Can't find category with ID " + id)));
     }
 
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can't find category with ID " + id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Can't find category with ID " + id));
         categoryMapper.updateCategoryFromDto(categoryDto,category);
         return categoryMapper.toDto(categoryRepository.save(category));
     }
