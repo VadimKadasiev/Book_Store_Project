@@ -1,6 +1,7 @@
 package book.store.service.impl;
 
 import book.store.dto.CategoryDto;
+import book.store.dto.CreateCategoryRequestDto;
 import book.store.exception.EntityNotFoundException;
 import book.store.mapper.CategoryMapper;
 import book.store.model.Category;
@@ -18,8 +19,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public CategoryDto save(CategoryDto categoryDto) {
-        Category category = categoryMapper.toModel(categoryDto);
+    public CategoryDto save(CreateCategoryRequestDto createCategoryRequestDto) {
+        Category category = categoryMapper.toCategory(createCategoryRequestDto);
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 

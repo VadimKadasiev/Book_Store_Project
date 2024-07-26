@@ -2,6 +2,7 @@ package book.store.controller;
 
 import book.store.dto.BookDtoWithoutCategoryIds;
 import book.store.dto.CategoryDto;
+import book.store.dto.CreateCategoryRequestDto;
 import book.store.service.BookService;
 import book.store.service.CategoryService;
 import jakarta.validation.Valid;
@@ -27,8 +28,9 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
-        return categoryService.save(categoryDto);
+    public CategoryDto createCategory(
+            @RequestBody @Valid CreateCategoryRequestDto createCategoryRequestDto) {
+        return categoryService.save(createCategoryRequestDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
