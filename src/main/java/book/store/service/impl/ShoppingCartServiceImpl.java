@@ -2,7 +2,6 @@ package book.store.service.impl;
 
 import book.store.dto.CartItemRequestDto;
 import book.store.dto.ShoppingCartResponseDto;
-import book.store.mapper.CartItemMapper;
 import book.store.mapper.ShoppingCartMapper;
 import book.store.model.CartItem;
 import book.store.model.ShoppingCart;
@@ -12,7 +11,6 @@ import book.store.repository.CartItemRepository;
 import book.store.repository.ShoppingCartRepository;
 import book.store.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -22,7 +20,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository cartItemRepository;
     private final BookRepository bookRepository;
     private final ShoppingCartMapper shoppingCartMapper;
-    private final CartItemMapper cartItemMapper;
 
     @Override
     public void createShoppingCart(User user) {
@@ -32,51 +29,42 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void createCartItem(CartItemRequestDto cartItemRequestDto,
-                               Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        CartItem cartItem = toCartItem(cartItemRequestDto,user);
+    public void createCartItem(CartItemRequestDto cartItemRequestDto, User user) {
+        CartItem cartItem = toCartItem(cartItemRequestDto, user);
         cartItemRepository.save(cartItem);
     }
 
     @Override
-    public ShoppingCartResponseDto getShoppingCart(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public ShoppingCartResponseDto getShoppingCart(User user) {
         ShoppingCart shoppingCart = shoppingCartRepository
-                .findShoppingCartByUserId(user.getId())
-                .orElseThrow();
+                .findShoppingCartByUserId(user.getId()).orElseThrow();
         return shoppingCartMapper.toShoppingCartResponseDto(shoppingCart);
     }
 
     @Override
-    public void deleteCartItem(Long id,Authentication authentication) {
-        if (checkCartItemOwnerMatching(id,authentication)) {
-            cartItemRepository.deleteById(id);
-        } else {
+    public void deleteCartItem(Long id, User user) {
+        if (!checkCartItemOwnerMatching(id, user)) {
             throw new RuntimeException("User is not owned by this shopping cart.");
         }
+        cartItemRepository.deleteById(id);
     }
 
     @Override
-    public void updateCartItem(Long id, CartItemRequestDto cartItemRequestDto,
-                               Authentication authentication) {
-        if (checkCartItemOwnerMatching(id,authentication)) {
-            User user = (User) authentication.getPrincipal();
-            CartItem cartItem = toCartItem(cartItemRequestDto,user);
-            cartItem.setId(id);
-            cartItemRepository.save(cartItem);
-        } else {
+    public void updateCartItem(Long id, CartItemRequestDto cartItemRequestDto, User user) {
+        if (!checkCartItemOwnerMatching(id, user)) {
             throw new RuntimeException("User is not owned by this shopping cart.");
         }
+        CartItem cartItem = toCartItem(cartItemRequestDto, user);
+        cartItem.setId(id);
+        cartItemRepository.save(cartItem);
     }
 
-    public boolean checkCartItemOwnerMatching(Long id, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public boolean checkCartItemOwnerMatching(Long id, User user) {
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow();
         return cartItem.getShoppingCart().getUser().getId().equals(user.getId());
     }
 
-    public CartItem toCartItem(CartItemRequestDto cartItemRequestDto,User user) {
+    public CartItem toCartItem(CartItemRequestDto cartItemRequestDto, User user) {
         CartItem cartItem = new CartItem();
         cartItem.setBook(bookRepository.getBookById(cartItemRequestDto.getBookId()).orElseThrow());
         cartItem.setQuantity(cartItemRequestDto.getQuantity());

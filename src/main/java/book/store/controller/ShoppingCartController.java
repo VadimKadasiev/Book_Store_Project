@@ -2,6 +2,7 @@ package book.store.controller;
 
 import book.store.dto.CartItemRequestDto;
 import book.store.dto.ShoppingCartResponseDto;
+import book.store.model.User;
 import book.store.service.ShoppingCartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +31,20 @@ public class ShoppingCartController {
     public void createCartItem(
             @RequestBody @Valid CartItemRequestDto cartItemRequestDto,
             Authentication authentication) {
-        shoppingCartService.createCartItem(cartItemRequestDto,authentication);
+        shoppingCartService.createCartItem(cartItemRequestDto, getCurrentUser(authentication));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartResponseDto getShoppingCartResponseDto(Authentication authentication) {
-        return shoppingCartService.getShoppingCart(authentication);
+        return shoppingCartService.getShoppingCart(getCurrentUser(authentication));
     }
 
     @DeleteMapping("items/{id}")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCartItem(@PathVariable Long id, Authentication authentication) {
-        shoppingCartService.deleteCartItem(id,authentication);
+        shoppingCartService.deleteCartItem(id, getCurrentUser(authentication));
     }
 
     @PutMapping("items/{id}")
@@ -52,6 +53,10 @@ public class ShoppingCartController {
     public void updateCartItem(@PathVariable Long id,
                                @RequestBody @Valid CartItemRequestDto cartItemRequestDto,
                                Authentication authentication) {
-        shoppingCartService.updateCartItem(id,cartItemRequestDto,authentication);
+        shoppingCartService.updateCartItem(id, cartItemRequestDto, getCurrentUser(authentication));
+    }
+
+    private User getCurrentUser(Authentication authentication) {
+        return (User) authentication.getPrincipal();
     }
 }

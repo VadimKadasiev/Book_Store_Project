@@ -8,5 +8,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
     @EntityGraph(attributePaths = "cartItems")
-    Optional<ShoppingCart> findShoppingCartByUserId(@Param("userId")Long userId);
+    Optional<ShoppingCart> findShoppingCartByUserId(@Param("userId") Long userId);
 }

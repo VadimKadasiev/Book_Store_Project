@@ -9,8 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 @Constraint(validatedBy = FieldMatchValidator.class)
 public @interface FieldMatch {
     String message();
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
+
     String first();
+
     String second();
 }
