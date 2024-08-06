@@ -77,9 +77,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemRepository.findByIdAndShoppingCartId(id, shoppingCart.getId())
                 .orElseThrow(() -> new RuntimeException(
                         "User is not owned by this shopping cart."));
-        System.out.println("deleted shopping cart item1");
         cartItemRepository.deleteById(id);
-        System.out.println("deleted shopping cart item2");
         return shoppingCartMapper
                 .toShoppingCartResponseDto(shoppingCart);
     }
