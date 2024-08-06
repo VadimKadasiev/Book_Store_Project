@@ -19,5 +19,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can't find user with this email"));
     }
-
 }

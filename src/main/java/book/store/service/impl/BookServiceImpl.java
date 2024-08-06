@@ -29,7 +29,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookMapper.toModel(bookRequestDto);
         book.setCategories(bookRequestDto.getCategoryIds().stream()
                 .map(categoryService::getById)
-                        .map(categoryMapper::toModel)
+                .map(categoryMapper::toModel)
                 .collect(Collectors.toSet()));
         return bookMapper.toDto(bookRepository.save(book));
     }

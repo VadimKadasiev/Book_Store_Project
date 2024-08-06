@@ -2,6 +2,7 @@ package book.store.controller;
 
 import book.store.dto.CartItemRequestDto;
 import book.store.dto.ShoppingCartResponseDto;
+import book.store.model.User;
 import book.store.service.ShoppingCartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,31 +28,40 @@ public class ShoppingCartController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('USER')")
-    public void createCartItem(
+    public ShoppingCartResponseDto createCartItem(
             @RequestBody @Valid CartItemRequestDto cartItemRequestDto,
             Authentication authentication) {
-        shoppingCartService.createCartItem(cartItemRequestDto,authentication);
+        return shoppingCartService.createCartItem(cartItemRequestDto,
+                getCurrentUserId(authentication));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartResponseDto getShoppingCartResponseDto(Authentication authentication) {
-        return shoppingCartService.getShoppingCart(authentication);
+        return shoppingCartService.getShoppingCart(getCurrentUserId(authentication));
     }
 
     @DeleteMapping("items/{id}")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCartItem(@PathVariable Long id, Authentication authentication) {
-        shoppingCartService.deleteCartItem(id,authentication);
+    public ShoppingCartResponseDto deleteCartItem(@PathVariable Long id,
+                                                  Authentication authentication) {
+        return shoppingCartService.deleteCartItem(id, getCurrentUserId(authentication));
     }
 
     @PutMapping("items/{id}")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public void updateCartItem(@PathVariable Long id,
-                               @RequestBody @Valid CartItemRequestDto cartItemRequestDto,
-                               Authentication authentication) {
-        shoppingCartService.updateCartItem(id,cartItemRequestDto,authentication);
+    public ShoppingCartResponseDto updateCartItem(@PathVariable Long id,
+                                                  @RequestBody @Valid
+                                                  CartItemRequestDto cartItemRequestDto,
+                                                  Authentication authentication) {
+        return shoppingCartService.updateCartItem(id, cartItemRequestDto,
+                getCurrentUserId(authentication));
+    }
+
+    private Long getCurrentUserId(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return user.getId();
     }
 }
