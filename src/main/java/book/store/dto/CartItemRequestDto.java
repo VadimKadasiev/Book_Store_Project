@@ -10,6 +10,5 @@ public class CartItemRequestDto {
     @NotNull
     private Long bookId;
     @Positive(message = "Quantity must be more than 0!")
-    @NotNull
     private int quantity;
 }

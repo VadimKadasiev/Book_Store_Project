@@ -37,16 +37,16 @@ public class ShoppingCartController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ShoppingCartResponseDto getShoppingCartResponseDto(Authentication authentication) {
+    public ShoppingCartResponseDto getShoppingCart(Authentication authentication) {
         return shoppingCartService.getShoppingCart(getCurrentUserId(authentication));
     }
 
     @DeleteMapping("items/{id}")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public ShoppingCartResponseDto deleteCartItem(@PathVariable Long id,
-                                                  Authentication authentication) {
-        return shoppingCartService.deleteCartItem(id, getCurrentUserId(authentication));
+    public void deleteCartItem(@PathVariable Long id,
+                               Authentication authentication) {
+        shoppingCartService.deleteCartItem(id, getCurrentUserId(authentication));
     }
 
     @PutMapping("items/{id}")

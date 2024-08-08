@@ -15,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -32,6 +33,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartResponseDto createCartItem(CartItemRequestDto cartItemRequestDto,
                                                   Long userId) {
         Book book = bookRepository.getBookById(cartItemRequestDto.getBookId())
