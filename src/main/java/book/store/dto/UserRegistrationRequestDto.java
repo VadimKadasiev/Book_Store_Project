@@ -1,6 +1,6 @@
 package book.store.dto;
 
-import book.store.security.FieldMatch;
+import book.store.validation.FieldMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
