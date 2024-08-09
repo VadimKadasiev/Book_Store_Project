@@ -8,6 +8,7 @@ import book.store.model.Role;
 import book.store.model.User;
 import book.store.repository.RoleRepository;
 import book.store.repository.UserRepository;
+import book.store.service.ShoppingCartService;
 import book.store.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,12 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
+
         if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
             throw new RegistrationException("User with this email already exists");
         }
@@ -32,7 +35,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(requestDto.getPassword()));
         Role userRole = roleRepository.findByName(Role.RoleName.ROLE_USER);
         user.setRoles(Set.of(userRole));
-        User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
+        userRepository.save(user);
+        shoppingCartService.createShoppingCart(user);
+        return userMapper.toUserResponse(user);
     }
 }

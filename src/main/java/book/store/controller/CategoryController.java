@@ -36,8 +36,8 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/{id}")
     public CategoryDto updateCategory(@PathVariable Long id,
-                               @RequestBody @Valid CategoryDto categoryDto) {
-        return categoryService.update(id,categoryDto);
+                                      @RequestBody @Valid CategoryDto categoryDto) {
+        return categoryService.update(id, categoryDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -63,6 +63,6 @@ public class CategoryController {
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(
             @PathVariable Long id, Pageable pageable) {
 
-        return bookService.findAllByCategoryId(id,pageable);
+        return bookService.findAllByCategoryId(id, pageable);
     }
 }

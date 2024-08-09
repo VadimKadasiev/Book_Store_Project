@@ -7,11 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface BookRepository extends JpaRepository<Book,Long> {
-    Book save(Book book);
-
-    List<Book> findAll();
-
+public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> getBookById(Long id);
 
     @Query("SELECT b FROM Book b JOIN b.categories c WHERE c.id=:categoryId")
