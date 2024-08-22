@@ -78,11 +78,13 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
     public List<OrderResponseDto> getOrders(User user, Pageable pageable) {
         return orderRepository.findAllByUserId(user.getId()).stream().map(
                 orderMapper::orderToOrderResponseDto).toList();
     }
 
+    @Override
     public OrderItemResponseDto getOrderItem(Long orderId, long orderItemId, User user) {
         checkUserOrderMatching(user, orderId);
         return orderItemMapper.toOrderItemResponseDto(orderItemRepository
@@ -98,6 +100,8 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderItemMapper::toOrderItemResponseDto).collect(Collectors.toSet());
     }
 
+    @Override
+    @Transactional
     public void changeOrderStatus(Long orderId, Order.OrderStatus orderStatus) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(orderStatus);

@@ -9,7 +9,9 @@ import book.store.service.OrderService;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +37,8 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public List<OrderResponseDto> getOrders(Authentication authentication, Pageable pageable) {
+    public List<OrderResponseDto> getOrders(Authentication authentication,
+                                            @ParameterObject @PageableDefault Pageable pageable) {
         return orderService.getOrders(getCurrentUser(authentication), pageable);
     }
 
@@ -51,17 +54,14 @@ public class OrderController {
     @PreAuthorize("hasRole('USER')")
     public Set<OrderItemResponseDto> getOrderItems(@PathVariable Long id,
                                                    Authentication authentication,
-                                                   Pageable pageable) {
-        return orderService.getOrderItems(id, getCurrentUser(authentication),pageable);
+                                                   @ParameterObject
+                                                       @PageableDefault Pageable pageable) {
+        return orderService.getOrderItems(id, getCurrentUser(authentication), pageable);
     }
 
     @PatchMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public void changeOrderStatus(@PathVariable Long id, @RequestBody String status) {
-        status = status.replace("\"", "")
-                .replace("}", "")
-                .trim()
-                .substring(15);
         orderService.changeOrderStatus(id, Order.OrderStatus.valueOf(status));
     }
 

@@ -8,7 +8,9 @@ import book.store.service.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,14 +56,15 @@ public class CategoryController {
 
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
-    public List<CategoryDto> getAllCategories(Pageable pageable) {
+    public List<CategoryDto> getAllCategories(@ParameterObject
+                                                  @PageableDefault Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
     @GetMapping("/{id}/books")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(
-            @PathVariable Long id, Pageable pageable) {
+            @PathVariable Long id, @ParameterObject @PageableDefault Pageable pageable) {
 
         return bookService.findAllByCategoryId(id, pageable);
     }
