@@ -6,6 +6,7 @@ import book.store.dto.OrderResponseDto;
 import book.store.model.Order;
 import book.store.model.User;
 import book.store.service.OrderService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class OrderController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public OrderResponseDto createOrder(Authentication authentication,
-                                        @RequestBody OrderRequestDto orderRequestDto) {
+                                        @RequestBody @Valid OrderRequestDto orderRequestDto) {
         return orderService.createOrder(getCurrentUser(authentication), orderRequestDto);
     }
 
@@ -55,7 +56,7 @@ public class OrderController {
     public Set<OrderItemResponseDto> getOrderItems(@PathVariable Long id,
                                                    Authentication authentication,
                                                    @ParameterObject
-                                                       @PageableDefault Pageable pageable) {
+                                                   @PageableDefault Pageable pageable) {
         return orderService.getOrderItems(id, getCurrentUser(authentication), pageable);
     }
 

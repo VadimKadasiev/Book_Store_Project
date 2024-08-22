@@ -6,23 +6,24 @@ import book.store.dto.OrderRequestDto;
 import book.store.dto.OrderResponseDto;
 import book.store.dto.ShoppingCartResponseDto;
 import book.store.exception.EntityNotFoundException;
+import book.store.exception.OrderProcessingException;
 import book.store.mapper.OrderItemMapper;
 import book.store.mapper.OrderMapper;
 import book.store.model.Book;
 import book.store.model.Order;
 import book.store.model.OrderItem;
+import book.store.model.ShoppingCart;
 import book.store.model.User;
 import book.store.repository.BookRepository;
 import book.store.repository.CartItemRepository;
 import book.store.repository.OrderItemRepository;
 import book.store.repository.OrderRepository;
+import book.store.repository.ShoppingCartRepository;
 import book.store.service.OrderService;
 import book.store.service.ShoppingCartService;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,15 +39,16 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final OrderItemMapper orderItemMapper;
     private final CartItemRepository cartItemRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
     @Transactional
     public OrderResponseDto createOrder(User user, OrderRequestDto orderRequestDto) {
-        if (shoppingCartService.getShoppingCart(user.getId()).getCartItems().isEmpty()) {
-            throw new RuntimeException("Shopping Cart is empty");
+        ShoppingCart cart = shoppingCartRepository.findByUserId(user.getId());
+        if (cart.getCartItems().isEmpty()) {
+            throw new OrderProcessingException("Cart is empty for user: " + user.getId());
         }
         Order order = new Order();
-        order.setOrderDate(LocalDateTime.now());
         order.setShippingAddress(orderRequestDto.getShippingAddress());
         order.setUser(user);
         orderRepository.save(order);
@@ -55,8 +57,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.orderToOrderResponseDto(order);
     }
 
-    @Transactional
-    public void createOrderItems(User user, Order order) {
+    private void createOrderItems(User user, Order order) {
         ShoppingCartResponseDto shoppingCartResponseDto =
                 shoppingCartService.getShoppingCart(user.getId());
         Set<CartItemResponseDto> cartItemResponseDtos = shoppingCartResponseDto.getCartItems();
@@ -80,37 +81,37 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> getOrders(User user, Pageable pageable) {
-        return orderRepository.findAllByUserId(user.getId()).stream().map(
-                orderMapper::orderToOrderResponseDto).toList();
+        return orderRepository.findAllByUserId(user.getId())
+                .stream()
+                .map(
+                        orderMapper::orderToOrderResponseDto)
+                .toList();
     }
 
     @Override
     public OrderItemResponseDto getOrderItem(Long orderId, long orderItemId, User user) {
-        checkUserOrderMatching(user, orderId);
-        return orderItemMapper.toOrderItemResponseDto(orderItemRepository
-                .findOrderItemByOrderIdAndId(orderId, orderItemId)
-                .orElseThrow(() -> new EntityNotFoundException("Can't find order item by id "
-                        + orderItemId + " in order by ID " + orderId)));
+        OrderItem orderItem = orderItemRepository.findByIdAndOrderIdAndUserId(
+                orderItemId, orderId, user.getId()).orElseThrow(() ->
+                new EntityNotFoundException("Can't find order item by id "
+                        + orderItemId + " in order by ID "
+                        + orderId + " for user by Id " + user.getId()));
+        return orderItemMapper.toOrderItemResponseDto(orderItem);
     }
 
     @Override
     public Set<OrderItemResponseDto> getOrderItems(Long orderId, User user, Pageable pageable) {
-        checkUserOrderMatching(user, orderId);
-        return orderItemRepository.findOrderItemByOrderId(orderId).stream()
-                .map(orderItemMapper::toOrderItemResponseDto).collect(Collectors.toSet());
+        Order order = orderRepository.findByIdAndUserId(orderId, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Can't find order by id "
+                        + orderId + " for user by Id " + user.getId()));
+        return orderItemMapper.toOrderItemDtoList(order.getOrderItems());
     }
 
     @Override
     @Transactional
     public void changeOrderStatus(Long orderId, Order.OrderStatus orderStatus) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find order by id "));
         order.setStatus(orderStatus);
         orderRepository.save(order);
-    }
-
-    private void checkUserOrderMatching(User user, Long orderId) {
-        if (orderRepository.findByIdAndUserId(orderId, user.getId()) == null) {
-            throw new RuntimeException("This user has no order with id " + orderId);
-        }
     }
 }
