@@ -1,27 +1,27 @@
 databaseChangeLog:
-    - changeSet:
-        id: create-users-roles-table
-        author: Vadim Kadasiev
-        changes:
-          - createTable:
-              tableName: users_roles
-              columns:
-                - column:
-                    name: user_id
-                    type: bigint
-                    autoIncrement: true
-                    constraints:
-                      primaryKey: true
-                      foreignKeyName: fk_users_roles_users
-                      referencedTableName: users
-                      referencedColumnNames: id
-                      nullable: false
-                - column:
-                    name: role_id
-                    type: bigint
-                    constraints:
-                      primaryKey: true
-                      foreignKeyName: fk_users_roles_roles
-                      referencedTableName: roles
-                      referencedColumnNames: id
-                      nullable: false
+  - changeSet:
+      id: create-users-roles-table
+      author: Vadim Kadasiev
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_users_roles_users
+                    referencedTableName: users
+                    referencedColumnNames: id
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_users_roles_roles
+                    referencedTableName: roles
+                    referencedColumnNames: id
+                    nullable: false
